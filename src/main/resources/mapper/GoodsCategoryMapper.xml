@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+严肃声明：
+开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
+本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
+可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
+Copyright (c) 2019-2021 十三 all rights reserved.
+版权所有，侵权必究！
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.newbeemallapi.dao.GoodsCategoryMapper">
+
+	<resultMap type="ltd.newbee.mall.newbeemallapi.entity.GoodsCategory" id="BaseResultMap">
+		<id column="category_id" property="categoryId" />
+		<result column="category_level" property="categoryLevel" />
+		<result column="parent_id" property="parentId" />
+		<result column="category_name" property="categoryName" />
+		<result column="category_rank" property="categoryRank" />
+		<result column="is_deleted" property="isDeleted" />
+		<result column="create_time" property="createTime" />
+		<result column="create_user" property="createUser" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_user" property="updateUser" />
+	</resultMap>
+    <sql id="Base_Column_List">
+	    category_id, category_level, parent_id, category_name, category_rank, is_deleted, 
+	    create_time, create_user, update_time, update_user
+  	</sql>
+	<select id="selectByLevelAndParentIdsAndNumber" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" /> 
+		FROM tb_newbee_mall_goods_category 
+		WHERE parent_id IN
+		<foreach collection="parentIds" item="parentId" open="(" separator="," close=")">
+			#{parentId}
+		</foreach>
+		AND is_deleted = 0 
+		AND category_level = #{categoryLevel}
+		ORDER BY category_rank desc
+        <if test="number>0">
+            limit #{number}
+        </if>
+	</select>
+</mapper>
