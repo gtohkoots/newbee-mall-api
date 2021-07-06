@@ -18,4 +18,6 @@ public interface NewBeeMallGoodsMapper {
 
 	NewBeeMallGoods getNewBeeGoodsById(Long goodsId);
 
+	NewBeeMallGoods selectByPrimaryKey(Long goodsId);
+
 }

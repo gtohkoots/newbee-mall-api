@@ -17,4 +17,10 @@ public interface MallUserAddressMapper {
 
 	int insertSelective(MallUserAddress userAddress);
 
+	MallUserAddress selectByPrimaryKey(Long addressId);
+
+	MallUserAddress selectDefaultAddressById(Long userId);
+
+	int deleteByprimaryKey(Long addressId);
+
 }

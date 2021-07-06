@@ -11,4 +11,12 @@ public interface NewBeeMallUserAddressService {
 
 	Boolean saveUserAddress(MallUserAddress userAddress);
 
+	MallUserAddress getAddressDetailById(Long addressId);
+
+	MallUserAddress getDefaultAddressById(Long userId);
+
+	Boolean updateAddressByParams(MallUserAddress userAddress);
+
+	Boolean deleteById(Long addressId);
+
 }

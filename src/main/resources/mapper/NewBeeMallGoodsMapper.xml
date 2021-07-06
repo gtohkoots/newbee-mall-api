@@ -48,6 +48,12 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 		</foreach>
 	</select>
 	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_goods_info
+		WHERE goods_id = #{goodsId}
+	</select>
+	
 	<select id="findNewBeeMallGoodsBySearch" parameterType="Map" resultMap="BaseResultMap">
 		SELECT <include refid="Base_Column_List" />
 		FROM tb_newbee_mall_goods_info

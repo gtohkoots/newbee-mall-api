@@ -32,6 +32,9 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 		SELECT <include refid="Base_Column_List" />
 		FROM tb_newbee_mall_user_address
 		WHERE user_id = #{userId}
+		AND is_deleted = 0
+		ORDER BY address_id DESC
+		LIMIT 20
 	</select>
 	
 	<select id="getDefaultAddress" resultMap="BaseResultMap">
@@ -45,40 +48,41 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 	
 	<update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.newbeemallapi.entity.MallUserAddress">
 		UPDATE tb_newbee_mall_user_address
-		SET 
-		<if test = "userId != null">
-			user_id = #{userId}
-		</if>
-		<if test = "userName != null">
-			user_name = #{userName}
-		</if>
-        <if test="userPhone != null">
-            user_phone = #{userPhone,jdbcType=VARCHAR},
-        </if>
-        <if test="defaultFlag != null">
-            default_flag = #{defaultFlag,jdbcType=TINYINT},
-        </if>
-        <if test="provinceName != null">
-            province_name = #{provinceName,jdbcType=VARCHAR},
-        </if>
-        <if test="cityName != null">
-            city_name = #{cityName,jdbcType=VARCHAR},
-        </if>
-        <if test="regionName != null">
-            region_name = #{regionName,jdbcType=VARCHAR},
-        </if>
-        <if test="detailAddress != null">
-            detail_address = #{detailAddress,jdbcType=VARCHAR},
-        </if>
-        <if test="isDeleted != null">
-            is_deleted = #{isDeleted,jdbcType=TINYINT},
-        </if>
-        <if test="createTime != null">
-            create_time = #{createTime,jdbcType=TIMESTAMP},
-        </if>
-        <if test="updateTime != null">
-            update_time = #{updateTime,jdbcType=TIMESTAMP},
-        </if>
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null">
+                user_phone = #{userPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="defaultFlag != null">
+                default_flag = #{defaultFlag,jdbcType=TINYINT},
+            </if>
+            <if test="provinceName != null">
+                province_name = #{provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="cityName != null">
+                city_name = #{cityName,jdbcType=VARCHAR},
+            </if>
+            <if test="regionName != null">
+                region_name = #{regionName,jdbcType=VARCHAR},
+            </if>
+            <if test="detailAddress != null">
+                detail_address = #{detailAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
         WHERE address_id = #{addressId}
 	</update>
 	
@@ -161,4 +165,25 @@ Copyright (c) 2019-2021 十三 all rights reserved.
             </if>
         </trim>
 	</insert>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_user_address
+		WHERE address_id = #{addressId}
+	</select>
+	
+	<select id="selectDefaultAddressById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_user_address
+		WHERE user_id = #{userId}
+		AND default_flag = 1
+		AND is_deleted = 0
+		LIMIT 1
+	</select>
+	
+	<delete id="deleteByprimaryKey" parameterType="java.lang.Long">
+		UPDATE tb_newbee_mall_user_address
+		SET is_deleted = 1
+		WHERE address_id = #{addressId}
+	</delete>
 </mapper>
