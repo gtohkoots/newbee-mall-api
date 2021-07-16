@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import ltd.newbee.mall.newbeemallapi.entity.NewBeeMallGoods;
+import ltd.newbee.mall.newbeemallapi.entity.StockNumDTO;
 import ltd.newbee.mall.newbeemallapi.util.PageQueryUtil;
 
 @Mapper
@@ -19,5 +20,7 @@ public interface NewBeeMallGoodsMapper {
 	NewBeeMallGoods getNewBeeGoodsById(Long goodsId);
 
 	NewBeeMallGoods selectByPrimaryKey(Long goodsId);
+
+	int updateStockNum(List<StockNumDTO> stock);
 
 }

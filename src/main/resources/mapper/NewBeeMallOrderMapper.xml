@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+严肃声明：
+开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
+本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
+可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
+Copyright (c) 2019-2021 十三 all rights reserved.
+版权所有，侵权必究！
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.newbeemallapi.dao.NewBeeMallOrderMapper">
+	<resultMap id="BaseResultMap" type="ltd.newbee.mall.newbeemallapi.entity.NewBeeMallOrder">
+		<id column="order_id" jdbcType="BIGINT" property="orderId" />
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="total_price" jdbcType="INTEGER" property="totalPrice"/>
+        <result column="pay_status" jdbcType="TINYINT" property="payStatus"/>
+        <result column="pay_type" jdbcType="TINYINT" property="payType"/>
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="extra_info" jdbcType="VARCHAR" property="extraInfo"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+	</resultMap>
+	<sql id="Base_Column_List">
+	    order_id, order_no, user_id, total_price, pay_status, pay_type, pay_time, order_status,
+	    extra_info, is_deleted, create_time, update_time
+	</sql>
+	<insert id="insertSelective" useGeneratedKeys="true" keyProperty="orderId">
+		INSERT INTO tb_newbee_mall_order
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="orderId != null">
+				order_id,
+			</if>
+			<if test="orderNo != null">
+				order_no,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="totalPrice != null">
+				total_price,
+			</if>
+			<if test="payStatus != null">
+				pay_status,
+			</if>
+			<if test="payType != null">
+				pay_type,
+			</if>
+			<if test="payTime != null">
+				pay_time,
+			</if>
+			<if test="orderStatus != null">
+				order_status,
+			</if>
+			<if test="extraInfo != null">
+				extra_info,
+			</if>
+			<if test="isDeleted != null">
+				is_deleted,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="orderId != null">
+				#{orderId},
+			</if>
+			<if test="orderNo != null">
+				#{orderNo},
+			</if>
+			<if test="userId != null">
+				#{userId},
+			</if>
+			<if test="totalPrice != null">
+				#{totalPrice},
+			</if>
+			<if test="payStatus != null">
+				#{payStatus},
+			</if>
+			<if test="payType != null">
+				#{payType},
+			</if>
+			<if test="payTime != null">
+				#{payTime},
+			</if>
+			<if test="orderStatus != null">
+				#{orderStatus},
+			</if>
+			<if test="extraInfo != null">
+				#{extraInfo},
+			</if>
+			<if test="isDeleted != null">
+				#{isDeleted},
+			</if>
+			<if test="createTime != null">
+				#{createTime},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime},
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="getMyOrders" parameterType="Map" resultType="int">
+		SELECT COUNT(*) FROM tb_newbee_mall_order
+		<where>
+			<if test="orderStatus!=null">
+				AND order_status = #{orderStatus}
+			</if>
+            <if test="userId!=null and userId!=''">
+                AND user_id = #{userId}
+            </if>
+		</where>		
+	</select>
+	
+	<select id="findNewBeeMallOrderList" parameterType="Map" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tb_newbee_mall_order
+		<where>
+			<if test="orderStatus!=null">
+				AND order_status = #{orderStatus}
+			</if>
+            <if test="userId!=null and userId!=''">
+                AND user_id = #{userId}
+            </if>
+		</where>
+		ORDER BY create_time desc
+		<if test="start != null and limit != null">
+			LIMIT #{start}, #{limit}
+		</if>
+	</select>
+	
+	<select id="selectByOrderNo" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_order
+		WHERE is_deleted = 0 AND
+		order_no = #{orderNo}
+	</select>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.newbeemallapi.entity.NewBeeMallOrder">
+		UPDATE tb_newbee_mall_order
+		<set>
+			<if test="orderId != null">
+				order_id = #{orderId},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId},
+			</if>
+			<if test="totalPrice != null">
+				total_price = #{totalPrice},
+			</if>
+			<if test="payStatus != null">
+				pay_status = #{payStatus},
+			</if>
+			<if test="orderStatus != null"> 
+				order_status = #{orderStatus},
+			</if>
+			<if test="payType != null">
+				pay_type = #{payType},
+			</if>
+			<if test="payTime != null">
+				pay_time = #{payTime},
+			</if>
+			<if test="orderStatus != null">
+				order_status = #{orderStatus},
+			</if>
+			<if test="extraInfo != null">
+				extra_info = #{extraInfo},
+			</if>
+			<if test="isDeleted != null">
+				is_deleted = #{isDeleted},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+		</set>
+		WHERE order_id = #{orderId}
+	</update>
+	
+	<update id="closeOrder">
+		UPDATE tb_newbee_mall_order
+		SET order_status = #{i},update_time = now()
+		WHERE order_id IN
+		<foreach collection="orderToDelete" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

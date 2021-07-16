@@ -107,4 +107,11 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 		WHERE goods_id = #{goodsId}
 	</select>
 	
+	<update id="updateStockNum" parameterType="ltd.newbee.mall.newbeemallapi.entity.StockNumDTO">
+		<foreach collection="stock" item="stockNumDTO">
+			UPDATE tb_newbee_mall_goods_info SET stock_num = stock_num - #{stockNumDTO.goodsCount}
+			WHERE goods_id = #{stockNumDTO.goodsId} AND goods_sell_status = 0 AND stock_num >= #{stockNumDTO.goodsCount};
+		</foreach>
+	</update>
+	
 </mapper>

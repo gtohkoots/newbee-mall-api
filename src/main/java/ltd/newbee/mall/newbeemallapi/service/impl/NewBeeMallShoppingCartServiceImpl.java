@@ -1,6 +1,7 @@
 package ltd.newbee.mall.newbeemallapi.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import ltd.newbee.mall.newbeemallapi.api.mall.param.SaveCartItemParam;
+import ltd.newbee.mall.newbeemallapi.api.mall.param.UpdateCartItemParam;
 import ltd.newbee.mall.newbeemallapi.api.mall.vo.NewBeeMallShoppingCartItemVO;
 import ltd.newbee.mall.newbeemallapi.common.Constants;
+import ltd.newbee.mall.newbeemallapi.common.NewBeeMallException;
 import ltd.newbee.mall.newbeemallapi.dao.NewBeeMallGoodsMapper;
 import ltd.newbee.mall.newbeemallapi.dao.NewBeeMallShoppingCartItemMapper;
 import ltd.newbee.mall.newbeemallapi.entity.NewBeeMallGoods;
@@ -102,6 +105,55 @@ public class NewBeeMallShoppingCartServiceImpl implements NewBeeMallShoppingCart
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public NewBeeMallShoppingCartItem getMallItemById(Long newBeeMallShoppingCartItemId) {
+		return newBeeMallShoppingCartItemMapper.selectByPrimaryKey(newBeeMallShoppingCartItemId);
+	}
+
+	@Override
+	public Boolean deleteById(Long newBeeMallShoppingCartItemId) {
+		return newBeeMallShoppingCartItemMapper.deleteByPrimaryKey(newBeeMallShoppingCartItemId) > 0;
+	}
+
+	@Override
+	public String updateNewBeeMallShoppingCartItem(UpdateCartItemParam updateCartItemParam, Long userId) {
+		NewBeeMallShoppingCartItem item = newBeeMallShoppingCartItemMapper.selectByPrimaryKey(updateCartItemParam.getCartItemId());
+		if (item == null) {
+			return "物品不存在";
+		}
+		if (updateCartItemParam.getGoodsCount() > 5) {
+			return "物品数量超过要求";
+		}
+		if (!item.getUserId().equals(userId)) {
+			return "物品并非您购买";
+		}
+		
+		item.setGoodsCount(updateCartItemParam.getGoodsCount());
+		item.setUpdateTime(new Date());
+		
+		int result = newBeeMallShoppingCartItemMapper.updateByPrimaryKeySelective(item);
+		if (result > 0) {
+			return "success";
+		}
+		return "error";
+	}
+
+	@Override
+	public List<NewBeeMallShoppingCartItemVO> getCartItemsForSettle(List<Long> cartItemIds, Long userId) {
+		List<NewBeeMallShoppingCartItemVO> NewBeeMallShoppingCartItemVOs = new ArrayList<>();
+		
+		List<NewBeeMallShoppingCartItem> newBeeMallCartItems= newBeeMallShoppingCartItemMapper.selectByUserIdandCartItemsId(cartItemIds, userId);
+		
+		if (CollectionUtils.isEmpty(newBeeMallCartItems)) {
+			NewBeeMallException.fail("返回值为空");
+		}
+		
+		if (newBeeMallCartItems.size() != cartItemIds.size()) {
+			NewBeeMallException.fail("参数异常");
+		}
+		return getNewBeeMallShoppingCartItemVOS(NewBeeMallShoppingCartItemVOs, newBeeMallCartItems);
 	}
 
 }

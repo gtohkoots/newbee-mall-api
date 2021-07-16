@@ -69,7 +69,9 @@ public enum ServiceResultEnum {
 
     REQUEST_FORBIDEN_ERROR("禁止该操作！"),
 
-    DB_ERROR("database error");
+    DB_ERROR("database error"), 
+    
+    NO_PERMISSION_ERROR("没有权限");
 
     private String result;
 

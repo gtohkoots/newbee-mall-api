@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+严肃声明：
+开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
+本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
+可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
+Copyright (c) 2019-2021 十三 all rights reserved.
+版权所有，侵权必究！
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.newbeemallapi.dao.NewBeeMallOrderItemMapper">
+
+	<resultMap type="ltd.newbee.mall.newbeemallapi.entity.NewBeeMallOrderItem" id="BaseResultMap">
+		<id column="order_item_id" property="orderItemId" />
+		<result column="order_id" property="orderId"/>
+		<result column="goods_id" property="goodsId"/>
+		<result column="goods_name" property="goodsName" />
+        <result column="goods_cover_img" property="goodsCoverImg"/>
+        <result column="selling_price" property="sellingPrice"/>
+        <result column="goods_count" property="goodsCount"/>
+        <result column="create_time" property="createTime"/>
+	</resultMap>
+    <sql id="Base_Column_List">
+	    order_item_id, order_id, goods_id, goods_name, goods_cover_img, selling_price, goods_count, 
+	    create_time
+	</sql>
+	<insert id="insertBatch" parameterType="ltd.newbee.mall.newbeemallapi.entity.NewBeeMallOrderItem">
+		INSERT INTO tb_newbee_mall_order_item (
+		order_id, goods_id, goods_name, goods_cover_img,
+		selling_price, goods_count ) VALUES
+		<foreach collection="newBeeMallOrderItems" item="oi" separator=",">
+			(#{oi.orderId},#{oi.goodsId},#{oi.goodsName},#{oi.goodsCoverImg},#{oi.sellingPrice},#{oi.goodsCount})
+		</foreach>
+	</insert>
+	
+	<select id="selectByOrderIds" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_order_item
+		WHERE order_id IN 
+		<foreach collection="orderIds" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+	
+	<select id="selectByOrderId" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_order_item
+		WHERE order_id = #{orderId}
+	</select>
+</mapper>

@@ -96,4 +96,64 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 		AND is_deleted = 0
 		LIMIT #{limit_num}
 	</select>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_shopping_cart_item
+		WHERE cart_item_id = #{newBeeMallShoppingCartItemId}
+		AND is_deleted = 0
+		LIMIT 1
+	</select>
+	
+	<update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		UPDATE tb_newbee_mall_shopping_cart_item
+		SET is_deleted = 1
+		WHERE cart_item_id = #{newBeeMallShoppingCartItemId} 
+		AND is_deleted = 0
+	</update>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.newbeemallapi.entity.NewBeeMallShoppingCartItem">
+		UPDATE tb_newbee_mall_shopping_cart_item
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsId != null">
+                goods_id = #{goodsId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsCount != null">
+                goods_count = #{goodsCount,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+		WHERE cart_item_id = #{cartItemId}
+	</update>
+	
+	<select id="selectByUserIdandCartItemsId" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_shopping_cart_item 
+		WHERE cart_item_id IN 
+		<foreach collection="cartItemIds" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+		AND is_deleted= 0
+		AND user_id = #{userId}
+	</select>
+	
+	<update id="deleteBatch">
+		UPDATE tb_newbee_mall_shopping_cart_item 
+		SET is_deleted = 1
+		WHERE cart_item_id IN 
+		<foreach collection="cartIds" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update> 
 </mapper>
