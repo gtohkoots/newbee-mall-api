@@ -87,6 +87,7 @@
 			    <version>2.2.0</version>
 			    <configuration>
 			      <version>1</version>
+			      <projectId>newbee-mall-demo</projectId>
 			    </configuration>
 		    </plugin>
         </plugins>
