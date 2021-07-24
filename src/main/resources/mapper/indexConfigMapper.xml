@@ -26,11 +26,19 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 	    config_id, config_name, config_type, goods_id, redirect_url, config_rank, is_deleted, 
 	    create_time, create_user, update_time, update_user
 	</sql>
-	<select id="findIndexConfigsByTypeAndNum" resultMap="BaseResultMap">
+<!-- 	<select id="findIndexConfigsByTypeAndNum" resultMap="BaseResultMap">
 		SELECT <include refid="Base_Column_List" />
 		FROM tb_newbee_mall_index_config 
 		WHERE is_deleted = 0 AND config_type = #{configType}
 		ORDER BY config_rank DESC 
+		LIMIT #{number}
+	</select> -->
+	
+	<select id="findIndexConfigsByTypeAndNum" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_index_config
+		WHERE config_type = #{configType} AND is_deleted = 0 
+		ORDER BY config_rank
 		LIMIT #{number}
 	</select>
 </mapper>

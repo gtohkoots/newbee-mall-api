@@ -22,33 +22,57 @@ public class NewBeeMallGoodsServiceImpl implements NewBeeMallGoodsService {
 	@Autowired
 	private NewBeeMallGoodsMapper goodsMapper;
 	
-	@Override
-	public PageResult searchNewBeeMallGoods(PageQueryUtil pageUtil) {
-		List<NewBeeMallGoods> goodsList = goodsMapper.findNewBeeMallGoodsBySearch(pageUtil);
-		int total = goodsMapper.findTotalNewBeeMallGoodsBySearch(pageUtil);
-		List<NewBeeMallSearchGoodsVO> returnList = new ArrayList<>();
-		if(!CollectionUtils.isEmpty(goodsList)) {
-			returnList = BeanUtil.copyList(goodsList, NewBeeMallSearchGoodsVO.class);
-			for(NewBeeMallSearchGoodsVO item: returnList) {
-				String goodsName = item.getGoodsName();
-				String goodsIntro = item.getGoodsIntro();
-				if (goodsName.length() > 20) {
-					goodsName = goodsName.substring(0,20) + "....";
-					item.setGoodsName(goodsName);
-				}
-				if(goodsIntro.length() > 28) {
-					goodsIntro = goodsIntro.substring(0,28) + "....";
-					item.setGoodsIntro(goodsIntro);
-				}
-			}
-		}
-		PageResult result = new PageResult(total,pageUtil.getLimit(),pageUtil.getPage(),returnList);
-		return result;
-	}
+//	@Override
+//	public PageResult searchNewBeeMallGoods(PageQueryUtil pageUtil) {
+//		List<NewBeeMallGoods> goodsList = goodsMapper.findNewBeeMallGoodsBySearch(pageUtil);
+//		int total = goodsMapper.findTotalNewBeeMallGoodsBySearch(pageUtil);
+//		List<NewBeeMallSearchGoodsVO> returnList = new ArrayList<>();
+//		if(!CollectionUtils.isEmpty(goodsList)) {
+//			returnList = BeanUtil.copyList(goodsList, NewBeeMallSearchGoodsVO.class);
+//			for(NewBeeMallSearchGoodsVO item: returnList) {
+//				String goodsName = item.getGoodsName();
+//				String goodsIntro = item.getGoodsIntro();
+//				if (goodsName.length() > 20) {
+//					goodsName = goodsName.substring(0,20) + "....";
+//					item.setGoodsName(goodsName);
+//				}
+//				if(goodsIntro.length() > 28) {
+//					goodsIntro = goodsIntro.substring(0,28) + "....";
+//					item.setGoodsIntro(goodsIntro);
+//				}
+//			}
+//		}
+//		PageResult result = new PageResult(total,pageUtil.getLimit(),pageUtil.getPage(),returnList);
+//		return result;
+//	}
 
 	@Override
 	public NewBeeMallGoods getNewBeeGoodsById(Long goodsId) {
 		return goodsMapper.getNewBeeGoodsById(goodsId);
+	}
+
+	@Override
+	public PageResult searchNewBeeMallGoods(PageQueryUtil pageUtil) {
+		List<NewBeeMallGoods> goods = goodsMapper.findNewBeeMallGoodsBySearch(pageUtil);
+		int total = goodsMapper.findTotalNewBeeMallGoodsBySearch(pageUtil);
+		List<NewBeeMallSearchGoodsVO> return_list = new ArrayList<>();
+		for(NewBeeMallGoods good: goods) {
+			//处理文字过长的问题
+			String goodsIntro = good.getGoodsIntro();
+			String goodsName = good.getGoodsName();
+			if(goodsIntro.length() >= 32) {
+				goodsIntro = goodsIntro.substring(0,32) + "....";
+				good.setGoodsIntro(goodsIntro);
+			}
+			if(goodsName.length() > 20) {
+				goodsName = goodsName.substring(0, 20) + ".....";
+				good.setGoodsName(goodsName);
+			}
+			NewBeeMallSearchGoodsVO temp = new NewBeeMallSearchGoodsVO();
+			BeanUtil.copyProperties(good, temp);
+			return_list.add(temp);
+		}
+		return new PageResult(total, pageUtil.getLimit(), pageUtil.getPage(), return_list);
 	}
 
 

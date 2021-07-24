@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,7 +42,43 @@ public class NewBeeMallGoodsAPI {
 	@Resource
 	NewBeeMallGoodsService newBeeMallGoodsService;
 	
-	@RequestMapping(value="/search", method = RequestMethod.GET)
+//	@RequestMapping(value="/search", method = RequestMethod.GET)
+//	@ApiOperation(value = "商品搜索接口", notes = "根据关键字和分类id进行搜索")
+//	public Result<PageResult<List<NewBeeMallSearchGoodsVO>>> search(
+//			@RequestParam(required = false) @ApiParam(value = "搜索关键字") String keyword, 
+//			@RequestParam(required = false) @ApiParam(value = "分类id") Long goodsCategoryId,
+//			@RequestParam(required = false) @ApiParam(value = "orderBy") String orderBy,
+//			@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
+//			@TokenToMallUser MallUser loginMallUser) {
+//		
+//		logger.info("goods search api,keyword={},goodsCategoryId={},orderBy={},pageNumber={},userId={}", keyword, goodsCategoryId, orderBy, pageNumber, loginMallUser.getUserId());
+//		
+//		Map params = new HashMap(8);
+//		if (goodsCategoryId == null && keyword.equals("")) {
+//			NewBeeMallException.fail("非法的搜索参数");
+//		}
+//		if (pageNumber == null || pageNumber < 1) {
+//			pageNumber = 1;
+//		}
+//		params.put("goodsCategoryId", goodsCategoryId);
+//		params.put("pageNumber", pageNumber);
+//		params.put("limit", 10);
+//		if(!StringUtils.isEmpty(keyword)) {
+//			params.put("keyword", keyword);
+//		}
+//		if(!StringUtils.isEmpty(orderBy)) {
+//			params.put("orderBy", orderBy);
+//		}
+//        //搜索上架状态下的商品
+//        params.put("goodsSellStatus", 0);
+//        
+//        PageQueryUtil pageUtil = new PageQueryUtil(params);
+//        
+//        System.out.println(pageUtil.toString());
+//		return ResultGenerator.genSuccessResult(newBeeMallGoodsService.searchNewBeeMallGoods(pageUtil));
+//	}
+	
+	@GetMapping("/search")
 	@ApiOperation(value = "商品搜索接口", notes = "根据关键字和分类id进行搜索")
 	public Result<PageResult<List<NewBeeMallSearchGoodsVO>>> search(
 			@RequestParam(required = false) @ApiParam(value = "搜索关键字") String keyword, 
@@ -49,32 +86,21 @@ public class NewBeeMallGoodsAPI {
 			@RequestParam(required = false) @ApiParam(value = "orderBy") String orderBy,
 			@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
 			@TokenToMallUser MallUser loginMallUser) {
-		
 		logger.info("goods search api,keyword={},goodsCategoryId={},orderBy={},pageNumber={},userId={}", keyword, goodsCategoryId, orderBy, pageNumber, loginMallUser.getUserId());
-		
-		Map params = new HashMap(8);
-		if (goodsCategoryId == null && keyword.equals("")) {
-			NewBeeMallException.fail("非法的搜索参数");
+		//我们用Pageutil类来管理params
+		HashMap<String,Object> map = new HashMap<String,Object>(8);
+		if(goodsCategoryId == null && keyword.equals("")) {
+			NewBeeMallException.fail("非法的参数");
 		}
-		if (pageNumber == null || pageNumber < 1) {
-			pageNumber = 1;
-		}
-		params.put("goodsCategoryId", goodsCategoryId);
-		params.put("pageNumber", pageNumber);
-		params.put("limit", 10);
-		if(!StringUtils.isEmpty(keyword)) {
-			params.put("keyword", keyword);
-		}
-		if(!StringUtils.isEmpty(orderBy)) {
-			params.put("orderBy", orderBy);
-		}
-        //搜索上架状态下的商品
-        params.put("goodsSellStatus", 0);
-        
-        PageQueryUtil pageUtil = new PageQueryUtil(params);
-        
-        System.out.println(pageUtil.toString());
-		return ResultGenerator.genSuccessResult(newBeeMallGoodsService.searchNewBeeMallGoods(pageUtil));
+		//将所有的param存入map
+		map.put("pageNumber", pageNumber);
+		map.put("limit", 10);
+		map.put("orderBy", orderBy);
+		map.put("keyword", keyword);
+		map.put("categoryId", goodsCategoryId);
+		map.put("goodSellStatus", 0);
+		PageQueryUtil search_param = new PageQueryUtil(map);
+		return ResultGenerator.genSuccessResult(newBeeMallGoodsService.searchNewBeeMallGoods(search_param));
 	}
 	
 	@RequestMapping(value = "/goods/detail/{goodsId}", method= RequestMethod.GET)

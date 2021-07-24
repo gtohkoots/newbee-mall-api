@@ -27,27 +27,54 @@ public class NewBeeMallIndexConfigServiceImpl implements NewBeeMallIndexConfigSe
 
 	@Override
 	public List<NewBeeMallIndexConfigGoodsVO> getConfigGoodsesForIndex(int configType, int number) {
-		List<NewBeeMallIndexConfigGoodsVO> newBeeMallIndexConfigGoodsVOS = new ArrayList<>(number);
+		//3为热销 4是新品
 		List<IndexConfig> indexConfigs = configMapper.findIndexConfigsByTypeAndNum(configType, number);
+		List<NewBeeMallIndexConfigGoodsVO> return_list =new ArrayList<NewBeeMallIndexConfigGoodsVO>();
 		if(!CollectionUtils.isEmpty(indexConfigs)) {
-			//取出所有goodsid
+			//收集所有的物品id
 			List<Long> goodsId = indexConfigs.stream().map(IndexConfig::getGoodsId).collect(Collectors.toList());
-			List<NewBeeMallGoods> newBeeMallGoods = goodsMapper.selectByPrimaryKeys(goodsId);
-			newBeeMallIndexConfigGoodsVOS = BeanUtil.copyList(newBeeMallGoods, NewBeeMallIndexConfigGoodsVO.class);
-			for(NewBeeMallIndexConfigGoodsVO item: newBeeMallIndexConfigGoodsVOS) {
-				String goodsName = item.getGoodsName();
+			//从数据库调取物品
+			List<NewBeeMallGoods> goods = goodsMapper.selectByPrimaryKeys(goodsId);
+			
+			return_list = BeanUtil.copyList(goods, NewBeeMallIndexConfigGoodsVO.class);
+			
+			//处理文字过多的情况
+			for(NewBeeMallIndexConfigGoodsVO item: return_list) {
 				String goodsIntro = item.getGoodsIntro();
-				if (goodsName.length() > 22) {
-					goodsName = goodsName.substring(0,22) + ".....";
-					item.setGoodsName(goodsName);
-				}
-				if (goodsIntro.length() > 30) {
-					goodsIntro = goodsIntro.substring(0,30) + ".....";
+				String goodsName = item.getGoodsName();
+				if (goodsIntro.length() >= 32) {
+					goodsIntro = goodsIntro.substring(0, 32) + "....";
 					item.setGoodsIntro(goodsIntro);
 				}
+				if (goodsName.length() > 20) {
+					goodsName = goodsName.substring(0, 20) + "....";
+					item.setGoodsName(goodsName);
+				}
 			}
+			
 		}
-		return newBeeMallIndexConfigGoodsVOS;
+		return return_list;
 	}
+
+	/*
+	 * @Override public List<NewBeeMallIndexConfigGoodsVO>
+	 * getConfigGoodsesForIndex(int configType, int number) {
+	 * List<NewBeeMallIndexConfigGoodsVO> newBeeMallIndexConfigGoodsVOS = new
+	 * ArrayList<>(number); List<IndexConfig> indexConfigs =
+	 * configMapper.findIndexConfigsByTypeAndNum(configType, number);
+	 * if(!CollectionUtils.isEmpty(indexConfigs)) { //取出所有goodsid List<Long> goodsId
+	 * =
+	 * indexConfigs.stream().map(IndexConfig::getGoodsId).collect(Collectors.toList(
+	 * )); List<NewBeeMallGoods> newBeeMallGoods =
+	 * goodsMapper.selectByPrimaryKeys(goodsId); newBeeMallIndexConfigGoodsVOS =
+	 * BeanUtil.copyList(newBeeMallGoods, NewBeeMallIndexConfigGoodsVO.class);
+	 * for(NewBeeMallIndexConfigGoodsVO item: newBeeMallIndexConfigGoodsVOS) {
+	 * String goodsName = item.getGoodsName(); String goodsIntro =
+	 * item.getGoodsIntro(); if (goodsName.length() > 22) { goodsName =
+	 * goodsName.substring(0,22) + "....."; item.setGoodsName(goodsName); } if
+	 * (goodsIntro.length() > 30) { goodsIntro = goodsIntro.substring(0,30) +
+	 * "....."; item.setGoodsIntro(goodsIntro); } } } return
+	 * newBeeMallIndexConfigGoodsVOS; }
+	 */
 
 }

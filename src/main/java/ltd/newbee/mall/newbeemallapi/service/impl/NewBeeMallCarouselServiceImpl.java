@@ -21,12 +21,24 @@ public class NewBeeMallCarouselServiceImpl implements NewBeeMallCarouselService
 
 	@Override
 	public List<NewBeeMallIndexCarouselVO> getCarouselsForIndex(int number) {
-		List<NewBeeMallIndexCarouselVO> newBeeCarouselList = new ArrayList<>(number);
+		//调取carousel
 		List<Carousel> carousels = carouselMapper.findCarouselByNum(number);
+		//创建返回的List
+		List<NewBeeMallIndexCarouselVO> return_list = new ArrayList<NewBeeMallIndexCarouselVO>();
 		if(!CollectionUtils.isEmpty(carousels)) {
-			newBeeCarouselList = BeanUtil.copyList(carousels, NewBeeMallIndexCarouselVO.class);
+			return_list = BeanUtil.copyList(carousels, NewBeeMallIndexCarouselVO.class);
 		}
-		return newBeeCarouselList;
+		return return_list;
 	}
+
+	/*
+	 * @Override public List<NewBeeMallIndexCarouselVO> getCarouselsForIndex(int
+	 * number) { List<NewBeeMallIndexCarouselVO> newBeeCarouselList = new
+	 * ArrayList<>(number); List<Carousel> carousels =
+	 * carouselMapper.findCarouselByNum(number);
+	 * if(!CollectionUtils.isEmpty(carousels)) { newBeeCarouselList =
+	 * BeanUtil.copyList(carousels, NewBeeMallIndexCarouselVO.class); } return
+	 * newBeeCarouselList; }
+	 */
 
 }

@@ -39,14 +39,14 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 	    goods_detail_content
 	</sql>
   	
-	<select id="selectByPrimaryKeys" resultMap="BaseResultMap">
+<!-- 	<select id="selectByPrimaryKeys" resultMap="BaseResultMap">
 		SELECT <include refid="Base_Column_List" />
 		FROM tb_newbee_mall_goods_info 
 		WHERE goods_id IN 
 		<foreach item="id" collection="list" open="(" separator="," close=")">
 			#{id}
 		</foreach>
-	</select>
+	</select> -->
 	
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap">
 		SELECT <include refid="Base_Column_List" />
@@ -54,7 +54,7 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 		WHERE goods_id = #{goodsId}
 	</select>
 	
-	<select id="findNewBeeMallGoodsBySearch" parameterType="Map" resultMap="BaseResultMap">
+<!-- 	<select id="findNewBeeMallGoodsBySearch" parameterType="Map" resultMap="BaseResultMap">
 		SELECT <include refid="Base_Column_List" />
 		FROM tb_newbee_mall_goods_info
 		WHERE 
@@ -70,15 +70,15 @@ Copyright (c) 2019-2021 十三 all rights reserved.
         <if test="orderBy!=null and orderBy!=''">
             <choose>
                 <when test="orderBy == 'new'">
-                    <!-- 按照发布时间倒序排列 -->
+                    按照发布时间倒序排列
                     order by goods_id desc
                 </when>
                 <when test="orderBy == 'price'">
-                    <!-- 按照售价从小到大排列 -->
+                    按照售价从小到大排列
                     order by selling_price asc
                 </when>
                 <otherwise>
-                    <!-- 默认按照库存数量从大到小排列 -->
+                    默认按照库存数量从大到小排列
                     order by stock_num desc
                 </otherwise>
             </choose>
@@ -86,8 +86,36 @@ Copyright (c) 2019-2021 十三 all rights reserved.
         <if test="start!=null and limit!=null">
             limit #{start},#{limit}
         </if>
+	</select> -->
+	<select id="findNewBeeMallGoodsBySearch" parameterType="Map" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_goods_info
+		WHERE 
+			<if test="goodSellStatus != null">
+				goods_sell_status = #{goodSellStatus}
+			</if>
+			<if test="categoryId != null">
+				AND goods_category_id = #{categoryId}
+			</if>
+			<if test="keyword != null">
+				AND goods_intro LIKE CONCAT('%', #{keyword} ,'%') OR goods_name LIKE CONCAT('%', #{keyword} ,'%')
+			</if>
+		<if test="orderBy != ''">
+			<choose>
+				<when test="orderBy == 'new'">
+					ORDER BY update_time
+				</when>
+				<when test="orderBy == 'price'">
+					ORDER BY selling_price
+				</when>
+				<otherwise>
+					ORDER BY goods_id
+				</otherwise>
+			</choose>
+		</if>
+		LIMIT #{start}, #{limit}
 	</select>
-	<select id="findTotalNewBeeMallGoodsBySearch" resultType="int" parameterType="Map">
+<!-- 	<select id="findTotalNewBeeMallGoodsBySearch" resultType="int" parameterType="Map">
 		SELECT COUNT(*) FROM tb_newbee_mall_goods_info
 		WHERE
 			<if test="keyword != null and keyword !=''">
@@ -98,6 +126,20 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 			</if>
 			<if test="goodsSellStatus != null">
 				AND goods_sell_status = #{goodsSellStatus}
+			</if>
+	</select> -->
+	
+	<select id="findTotalNewBeeMallGoodsBySearch" resultType="int" parameterType="Map">
+		SELECT COUNT(*) FROM tb_newbee_mall_goods_info
+		WHERE 
+			<if test="goodSellStatus != null">
+				goods_sell_status = #{goodSellStatus}
+			</if>
+			<if test="categoryId != null">
+				AND goods_category_id = #{categoryId}
+			</if>
+			<if test="keyword != null">
+				AND goods_intro LIKE CONCAT('%', #{keyword} ,'%') OR goods_name LIKE CONCAT('%', #{keyword} ,'%')
 			</if>
 	</select>
 	
@@ -113,5 +155,14 @@ Copyright (c) 2019-2021 十三 all rights reserved.
 			WHERE goods_id = #{stockNumDTO.goodsId} AND goods_sell_status = 0 AND stock_num >= #{stockNumDTO.goodsCount};
 		</foreach>
 	</update>
+	
+	<select id="selectByPrimaryKeys" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />
+		FROM tb_newbee_mall_goods_info
+		WHERE goods_id IN
+		<foreach collection="goodsId" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
 	
 </mapper>
